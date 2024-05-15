@@ -6,7 +6,7 @@
     <title>AirbnbClone</title>
 </head>
 <body>
-    <h3>Listing details</h3>
+    <h3>Listing details : </h3>
     <ul>
         <li><%=data.title%></li>
         <li><%=data.description%></li>
@@ -14,5 +14,11 @@
         <li><%=data.location%></li>
         <li><%=data.country%></li>
     </ul>
+    <form action="/listings/<%=data._id%>/edit">
+        <button>Edit</button>
+    </form>
+    <form action="/listings/<%=data._id%>?_method=DELETE" method="post">
+        <button>Delete</button>
+    </form>
 </body>
 </html>

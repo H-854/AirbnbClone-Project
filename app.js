@@ -2,7 +2,11 @@ const express = require("express");
 const app = express();
 const mongoose = require('mongoose');
 const Listing = require("./models/listing.js");
-const path = require("path")
+const path = require("path");
+const methodOverride = require('method-override');
+
+app.use(methodOverride('_method'));
+
 main()
 .then(()=>{
     console.log("Connection established");
@@ -39,3 +43,25 @@ app.get("/listings/:id",async (req,res)=>{
     res.render("listings/show.ejs",{ data });
   })
 })
+
+//Delete Route
+app.delete("/listings/:id",async (req,res)=>{
+  let { id } = req.params;
+  await Listing.findByIdAndDelete(id).then(()=>{
+    res.redirect("/listings")
+  })
+})
+
+//Edit Route
+app.get("/listings/:id/edit", async (req, res) => {
+  let { id } = req.params;
+  const listing = await Listing.findById(id);
+  res.render("listings/edit.ejs", { listing });
+});
+
+//Update Route
+app.put("/listings/:id", async (req, res) => {
+  let { id } = req.params;
+  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+  res.redirect(`/listings/${id}`);
+});
