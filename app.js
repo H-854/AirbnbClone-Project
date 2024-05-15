@@ -66,3 +66,12 @@ app.put("/listings/:id", async (req, res) => {
   res.redirect(`/listings/${id}`);
 });
 
+app.post("/listings/:id",(req,res)=>{
+  res.render("listings/new.ejs");
+})
+
+app.post("/listings", async (req, res) => {
+  const newListing = new Listing(req.body.listing);
+  await newListing.save();
+  res.redirect("/listings");
+});
