@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require('method-override');
+const ejsMate = require("ejs-mate");
 
 app.use(methodOverride('_method'));
 
@@ -18,8 +19,13 @@ async function main() {
 }
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"/views"));
-app.use(express.json()) // for json
-app.use(express.urlencoded({ extended: true })) // for form data
+app.use(express.json()); // for json
+app.use(express.urlencoded({ extended: true })); // for form data
+//serving static files
+app.use(express.static(path.join(__dirname,"/public")));
+
+// use ejs-locals for all ejs templates:
+app.engine('ejs', ejsMate);
 const port = 3000;
 
 app.listen(port,()=>{
@@ -66,7 +72,8 @@ app.put("/listings/:id", async (req, res) => {
   res.redirect(`/listings/${id}`);
 });
 
-app.post("/listings/:id",(req,res)=>{
+//new route
+app.get("/listings/add/new",(req,res)=>{
   res.render("listings/new.ejs");
 })
 

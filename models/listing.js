@@ -10,13 +10,11 @@ const listingSchema = new mongoose.Schema({
     image: {
         type: String,
         default: "https://unsplash.com/photos/the-sun-is-setting-over-a-body-of-water-AhMoWv0fQzc",
-        set: function(v) {
-            if (typeof v === 'object' && v !== null && v.url) {
-                return v.url;
-            }
-            return v === "" ? "https://unsplash.com/photos/the-sun-is-setting-over-a-body-of-water-AhMoWv0fQzc" : v;
-        }
-    },
+        set: (v) =>
+            v === ""
+              ? "https://images.unsplash.com/photo-1625505826533-5c80aca7d157?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGdvYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60"
+              : v,
+        },
     price: Number,
     location: String,
     country: String
