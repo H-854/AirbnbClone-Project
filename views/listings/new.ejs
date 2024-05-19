@@ -8,6 +8,12 @@
         <div class="mb-3 ">
           <label for="title" class="form-label">Title</label>
           <input name="listing[title]" placeholder="Enter Title" type="text" id="title" class="form-control" required/>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter title.
+          </div>
         </div>
         
         <div class="mb-3">
@@ -19,6 +25,12 @@
             id="Description"
             required
           ></textarea>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter description.
+          </div>
         </div>
         
         <div class="mb-3">
@@ -36,11 +48,23 @@
           <div class="mb-3 col-md-4">
             <label for="Price" class="form-label">Price</label>
             <input name="listing[price]" placeholder="6000" type="number" id="Price" class="form-control" required/>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+            <div class="invalid-feedback">
+              Please enter price.
+            </div>
           </div>
     
           <div class="mb-3 col-md-8">
             <label for="Country" class="form-label">Country</label>
             <input name="listing[country]" placeholder="India" type="text" id="Country" class="form-control" required/>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+            <div class="invalid-feedback">
+              Please enter country.
+            </div>
           </div>
         </div>
   
@@ -54,6 +78,12 @@
             class="form-control"
             required
           />
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter location.
+          </div>
         </div>
         <br><br>
       <button class="btn btn-dark mb-3" style="background-color: #fe424d; border: none;">Add</button>
