@@ -31,7 +31,10 @@ body{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    position: absolute;
     align-items: space-evenly;
+    bottom: 0;
+    width: 100%;
 }
 .f-info-links,.f-info-brand{
     width: 100%;
