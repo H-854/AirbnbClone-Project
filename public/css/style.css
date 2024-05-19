@@ -31,9 +31,15 @@ body{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    position: absolute;
+    position: static;
     align-items: space-evenly;
     bottom: 0;
+    width: 100%;
+}
+footer{
+    position: absolute;
+    border: 0;
+    top: 100%;
     width: 100%;
 }
 .f-info-links,.f-info-brand{

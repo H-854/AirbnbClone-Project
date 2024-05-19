@@ -7,6 +7,7 @@ const methodOverride = require('method-override');
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
+const { listingSchema } = require("./schema.js");
 
 app.use(methodOverride('_method'));
 
@@ -34,6 +35,15 @@ app.listen(port,()=>{
     console.log("Server is listening to port : ",3000);
 })
 
+const validateListing = (req,res,next)=>{
+  let result = listingSchema.validate(req.body);
+  if(result.error){
+    let errDetail = result.error.map((el)=>el.message).join(",");
+    throw new ExpressError(400,errDetail);
+  }else{
+    next()
+  }
+}
 //Index route
 app.get("/listings",wrapAsync(async (req,res)=>{
   await Listing.find({}).then((listings)=>{
@@ -68,10 +78,7 @@ app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
 }));
 
 //Update Route
-app.put("/listings/:id", wrapAsync(async (req, res) => {
-  if(!req.body.listing){
-    throw new ExpressError(400,"Send valid data");
-  }
+app.put("/listings/:id",validateListing,wrapAsync(async (req, res) => {
   let { id } = req.params;
   await Listing.findByIdAndUpdate(id, { ...req.body.listing });
   res.redirect(`/listings/${id}`);
@@ -83,10 +90,8 @@ app.get("/listings/add/new",(req,res)=>{
 })
 
 
-app.post("/listings", wrapAsync(async (req, res) => {
-  if(!req.body.listing){
-    throw new ExpressError(400,"Send valid data");
-  }
+app.post("/listings",validateListing, wrapAsync(async (req, res) => {
+  
   const newListing = new Listing(req.body.listing);
   await newListing.save();
   res.redirect("/listings");
