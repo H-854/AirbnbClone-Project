@@ -5,6 +5,8 @@ const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require('method-override');
 const ejsMate = require("ejs-mate");
+const wrapAsync = require("./utils/wrapAsync.js");
+const ExpressError = require("./utils/ExpressError.js");
 
 app.use(methodOverride('_method'));
 
@@ -33,52 +35,70 @@ app.listen(port,()=>{
 })
 
 //Index route
-app.get("/listings",async (req,res)=>{
+app.get("/listings",wrapAsync(async (req,res)=>{
   await Listing.find({}).then((listings)=>{
     res.render("listings/index.ejs",{ listings})
   })
   .catch((e)=>{
     res.send(e);
   })
-})
+}))
 
 //Show Route
-app.get("/listings/:id",async (req,res)=>{
+app.get("/listings/:id",wrapAsync(async (req,res)=>{
   let { id } = req.params;
   await Listing.findById(id).then((data)=>{
     res.render("listings/show.ejs",{ data });
   })
-})
+}))
 
 //Delete Route
-app.delete("/listings/:id",async (req,res)=>{
+app.delete("/listings/:id",wrapAsync(async (req,res)=>{
   let { id } = req.params;
   await Listing.findByIdAndDelete(id).then(()=>{
     res.redirect("/listings")
   })
-})
+}))
 
 //Edit Route
-app.get("/listings/:id/edit", async (req, res) => {
+app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
   let { id } = req.params;
   const listing = await Listing.findById(id);
   res.render("listings/edit.ejs", { listing });
-});
+}));
 
 //Update Route
-app.put("/listings/:id", async (req, res) => {
+app.put("/listings/:id", wrapAsync(async (req, res) => {
+  if(!req.body.listing){
+    throw new ExpressError(400,"Send valid data");
+  }
   let { id } = req.params;
   await Listing.findByIdAndUpdate(id, { ...req.body.listing });
   res.redirect(`/listings/${id}`);
-});
+}));
 
 //new route
 app.get("/listings/add/new",(req,res)=>{
   res.render("listings/new.ejs");
 })
 
-app.post("/listings", async (req, res) => {
+
+app.post("/listings", wrapAsync(async (req, res) => {
+  if(!req.body.listing){
+    throw new ExpressError(400,"Send valid data");
+  }
   const newListing = new Listing(req.body.listing);
   await newListing.save();
   res.redirect("/listings");
-});
+}));
+
+//if req do not match 
+app.all("*",(req,res,next)=>{
+  next(new ExpressError(404,"Page not found"));
+})
+
+//ERROR HANDLING MIDDLEWARE
+app.use((err,req,res,next)=>{
+  let { status=500,message ="UNKNOWN ERROR OCCURED"} = err;
+  res.status(status).send(message);
+})
