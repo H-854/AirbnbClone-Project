@@ -1,13 +1,13 @@
 <% layout("/layouts/boilerplate.ejs") %>
   <body>
     
-    <div class="row mt-3">
+    <div class="row mt-3 ">
       <div class="col-8 offset-2">
         <h3>Create a New Listing</h3>
-      <form method="POST" action="/listings">
+      <form method="POST" action="/listings" class="needs-validation" novalidate>
         <div class="mb-3 ">
           <label for="title" class="form-label">Title</label>
-          <input name="listing[title]" placeholder="Enter Title" type="text" id="title" class="form-control"/>
+          <input name="listing[title]" placeholder="Enter Title" type="text" id="title" class="form-control" required/>
         </div>
         
         <div class="mb-3">
@@ -17,6 +17,7 @@
             placeholder="Enter Description"
             class="form-control"
             id="Description"
+            required
           ></textarea>
         </div>
         
@@ -34,12 +35,12 @@
         <div class="row">
           <div class="mb-3 col-md-4">
             <label for="Price" class="form-label">Price</label>
-            <input name="listing[price]" placeholder="6000" type="number" id="Price" class="form-control"/>
+            <input name="listing[price]" placeholder="6000" type="number" id="Price" class="form-control" required/>
           </div>
     
           <div class="mb-3 col-md-8">
             <label for="Country" class="form-label">Country</label>
-            <input name="listing[country]" placeholder="India" type="text" id="Country" class="form-control"/>
+            <input name="listing[country]" placeholder="India" type="text" id="Country" class="form-control" required/>
           </div>
         </div>
   
@@ -51,6 +52,7 @@
             type="text"
             id="location"
             class="form-control"
+            required
           />
         </div>
         <br><br>
