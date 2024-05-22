@@ -8,6 +8,7 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema } = require("./schema.js");
+const Review = require("./models/review.js");
 
 app.use(methodOverride('_method'));
 
@@ -96,6 +97,18 @@ app.post("/listings",validateListing, wrapAsync(async (req, res) => {
   await newListing.save();
   res.redirect("/listings");
 }));
+
+//adding a review
+app.post("/listings/:id/reviews",async (req,res)=>{
+  let { id } = req.params;
+  let listing = await Listing.findById(id);
+  let newReview = new Review(req.body.review);
+
+  listing.reviews.push(newReview);
+  await listing.save();
+  await newReview.save();
+  res.send("NEW REVIEW SAVED");
+})
 
 //if req do not match 
 app.all("*",(req,res,next)=>{
