@@ -1,16 +1,12 @@
 const express = require("express");
 const app = express();
 const mongoose = require('mongoose');
-const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require('method-override');
 const ejsMate = require("ejs-mate");
-const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema } = require("./schema.js");
-const { reviewSchema } = require("./schema.js");
-const Review = require("./models/review.js");
 const listings = require("./routes/listing.js");
+const reviews = require("./routes/review.js");
 
 app.use(methodOverride('_method'));
 
@@ -38,40 +34,10 @@ const port = 3000;
 app.listen(port,()=>{
     console.log("Server is listening to port : ",3000);
 })
-
-
-
-const validateReview = (req,res,next)=>{
-  let result = reviewSchema.validate(req.body);
-  if(result.error){
-    // let errDetail = result.error.map((el)=>el.message).join(",");
-    throw new ExpressError(400,result.error);
-  }else{
-    next()
-  }
-}
-
 app.use("/listings", listings);
+app.use("/listings/:id/reviews",reviews)
 
-//adding a review
-app.post("/listings/:id/reviews",validateReview, wrapAsync(async (req,res)=>{
-  let { id } = req.params;
-  let listing = await Listing.findById(id);
-  let newReview = new Review(req.body.review);
 
-  listing.reviews.push(newReview);
-  await listing.save();
-  await newReview.save();
-  res.redirect(`/listings/${id}`)
-}))
-
-//deleting review
-app.delete("/listings/:id/reviews/:reviewId", wrapAsync(async (req,res)=>{
-  let { id,reviewId } = req.params;
-  await Listing.findByIdAndUpdate(id,{$pull: {review: reviewId}});
-  await Review.findByIdAndDelete(reviewId);
-  res.redirect(`/listings/${id}`);
-}))
 //if req do not match 
 app.all("*",(req,res,next)=>{
   next(new ExpressError(404,"Page not found"));
