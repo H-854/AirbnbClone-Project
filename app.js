@@ -10,6 +10,7 @@ const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema } = require("./schema.js");
 const { reviewSchema } = require("./schema.js");
 const Review = require("./models/review.js");
+const listings = require("./routes/listing.js");
 
 app.use(methodOverride('_method'));
 
@@ -38,15 +39,7 @@ app.listen(port,()=>{
     console.log("Server is listening to port : ",3000);
 })
 
-const validateListing = (req,res,next)=>{
-  let result = listingSchema.validate(req.body);
-  if(result.error){
-    let errDetail = result.error.map((el)=>el.message).join(",");
-    throw new ExpressError(400,errDetail);
-  }else{
-    next()
-  }
-}
+
 
 const validateReview = (req,res,next)=>{
   let result = reviewSchema.validate(req.body);
@@ -58,58 +51,7 @@ const validateReview = (req,res,next)=>{
   }
 }
 
-//Index route
-app.get("/listings",wrapAsync(async (req,res)=>{
-  await Listing.find({}).then((listings)=>{
-    res.render("listings/index.ejs",{ listings})
-  })
-  .catch((e)=>{
-    res.send(e);
-  })
-}))
-
-//Show Route
-app.get("/listings/:id",wrapAsync(async (req,res)=>{
-  let { id } = req.params;
-  await Listing.findById(id).populate("reviews").then((data)=>{
-    res.render("listings/show.ejs",{ data });
-  })
-}))
-
-//Delete Route
-app.delete("/listings/:id",wrapAsync(async (req,res)=>{
-  let { id } = req.params;
-  await Listing.findByIdAndDelete(id).then(()=>{
-    res.redirect("/listings")
-  })
-}))
-
-//Edit Route
-app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
-  let { id } = req.params;
-  const listing = await Listing.findById(id);
-  res.render("listings/edit.ejs", { listing });
-}));
-
-//Update Route
-app.put("/listings/:id",validateListing,wrapAsync(async (req, res) => {
-  let { id } = req.params;
-  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-  res.redirect(`/listings/${id}`);
-}));
-
-//new route
-app.get("/listings/add/new",(req,res)=>{
-  res.render("listings/new.ejs");
-})
-
-
-app.post("/listings",validateListing, wrapAsync(async (req, res) => {
-  
-  const newListing = new Listing(req.body.listing);
-  await newListing.save();
-  res.redirect("/listings");
-}));
+app.use("/listings", listings);
 
 //adding a review
 app.post("/listings/:id/reviews",validateReview, wrapAsync(async (req,res)=>{
