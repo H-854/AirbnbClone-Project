@@ -64,6 +64,7 @@ app.listen(port,()=>{
 app.use((req,res,next)=>{
   res.locals.success = req.flash("success");
   res.locals.failure = req.flash("failure");
+  res.locals.userReq = req.user;
   next();
 })
 

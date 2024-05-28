@@ -18,6 +18,15 @@
               <a class="nav-link" href="/listings">All Listings</a>
               <a class="nav-link" href="/listings/add/new">Add new listings</a>
             </div>
+            <div class="navbar-nav ms-auto">
+              <%if(!userReq){%>
+                <a class="nav-link" aria-current="page" href="/signup">Signup</a>
+                <a class="nav-link" href="/login">Login</a>
+              <%}%>
+              <%if(userReq){%>
+                <a class="nav-link" href="/logout">Logout</a>
+              <%}%>
+            </div>
           </div>
         </div>
       </nav>

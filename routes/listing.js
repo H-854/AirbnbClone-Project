@@ -4,7 +4,7 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema } = require("../schema.js");
 const Listing = require("../models/listing.js");
-
+const { isLoggedIn, authorization } = require("../middleware.js");
 const validateListing = (req,res,next)=>{
     let result = listingSchema.validate(req.body);
     if(result.error){
@@ -27,7 +27,7 @@ router.get("/",wrapAsync(async (req,res)=>{
   //Show Route
 router.get("/:id",wrapAsync(async (req,res)=>{
     let { id } = req.params;
-    const data = await Listing.findById(id).populate("reviews");
+    const data = await Listing.findById(id).populate({path: "reviews",populate:{ path: "author"}}).populate("owner");
     if(!data){
       req.flash("failure","Listing doesn't exit");
       res.redirect("/listings");
@@ -36,7 +36,7 @@ router.get("/:id",wrapAsync(async (req,res)=>{
 }))
   
   //Delete Route
-router.delete("/:id",wrapAsync(async (req,res)=>{
+router.delete("/:id",isLoggedIn,authorization,wrapAsync(async (req,res)=>{
     let { id } = req.params;
     await Listing.findByIdAndDelete(id).then(()=>{
       req.flash("success","Listing deleted")
@@ -45,7 +45,7 @@ router.delete("/:id",wrapAsync(async (req,res)=>{
 }))
   
   //Edit Route
-router.get("/:id/edit", wrapAsync(async (req, res) => {
+router.get("/:id/edit",isLoggedIn,authorization,wrapAsync(async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
     
@@ -58,26 +58,22 @@ router.get("/:id/edit", wrapAsync(async (req, res) => {
 }));
   
   //Update Route
-router.put("/:id",validateListing,wrapAsync(async (req, res) => {
+router.put("/:id",isLoggedIn,authorization,validateListing,wrapAsync(async (req, res) => {
     let { id } = req.params;
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
     req.flash("success","Listing updated")
-   
     res.redirect(`/listings/${id}`);
 }));
   
   //new route
-router.get("/add/new",(req,res)=>{
-  if(!req.isAuthenticated()){
-    req.flash("failure","You must be logged in");
-    return res.redirect("/login")
-  }
+router.get("/add/new",isLoggedIn,(req,res)=>{
   res.render("listings/new.ejs");
 })
   
   
 router.post("/",validateListing, wrapAsync(async (req, res) => {
     const newListing = new Listing(req.body.listing);
+    newListing.owner = req.user._id;
     await newListing.save();
     req.flash("success","New Listing Created");
     res.redirect("/listings");

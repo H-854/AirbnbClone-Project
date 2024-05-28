@@ -10,6 +10,8 @@
         <img src="<%=data.image%>" class="card-img-top show-img" alt="listing_image">
         <div class="card-body">
             <p class="card-text">
+                <b><i>Owned By : <%=data.owner.username%></i></b>
+                <br>
                 <%=data.description%>
                 <br>
                 &#8377 <%=data.price.toLocaleString("en-IN")%>
@@ -21,14 +23,18 @@
         </div>
     </div>
     </div>
-    <div class="btns">
-        <a href="/listings/<%=data._id%>/edit" class="btn btn-dark col-1 offset-3 mb-3" style="height: 2.3rem; background-color: #fe424d;border: none;">Edit</a>
-        <form action="/listings/<%=data._id%>?_method=DELETE" method="post">
-            <button class="btn btn-dark col-1 offset-3 mb-3" style="width: 5rem;">Delete</button>
-        </form>
-    </div>
+    <%if(userReq && userReq._id.equals(data.owner._id)){%>
+        <div class="btns">
+            <a href="/listings/<%=data._id%>/edit" class="btn btn-dark col-1 offset-3 mb-3" style="height: 2.3rem; background-color: #fe424d;border: none;">Edit</a>
+            <form action="/listings/<%=data._id%>?_method=DELETE" method="post">
+                <button class="btn btn-dark col-1 offset-3 mb-3" style="width: 5rem;">Delete</button>
+            </form>
+        </div>
+    <%}%>
+    
     
     <div class="col-6 offset-3 mb-3">
+        <%if(userReq){%>
         <hr>
         <h4>Leave a review</h4>
         <form action="/listings/<%=data._id%>/reviews" method="post" novalidate class="needs-validation">
@@ -45,6 +51,7 @@
             </div>
             <button class="btn btn-outline-dark">Submit</button>
         </form>
+        <%}%>
         <hr>
         <div>
             <h4>All Review</h4>
@@ -52,13 +59,15 @@
                 <%for(review of data.reviews){%>
                     <div class="card col-5 mb-3 ms-3">
                         <div class="card-body">
-                            <h5 class="card-title">Jane Doe</h5>
+                            <h5 class="card-title mt-2">@<%=review.author.username%></h5>
                             <p class="card-text"><%= review.comment %></p>
-                            <p class="card-text"><%= review.rating %> Star</p>
+                            <p class="card-text mb-2"><%= review.rating %> Star</p>
                         </div>
-                        <form action="/listings/<%=data._id%>/reviews/<%=review._id%>?_method=DELETE" class="mb-3" method="post">
-                            <button class="btn btn-sm btn-dark">Delete</button>
-                        </form>
+                        <%if(userReq && userReq._id.equals(review.author._id)){%>
+                            <form action="/listings/<%=data._id%>/reviews/<%=review._id%>?_method=DELETE" class="mb-3" method="post">
+                                <button class="btn btn-sm btn-dark">Delete</button>
+                            </form>
+                        <%}%>
                     </div>
                 <%}%>
             </div>
