@@ -68,7 +68,11 @@ router.put("/:id",validateListing,wrapAsync(async (req, res) => {
   
   //new route
 router.get("/add/new",(req,res)=>{
-    res.render("listings/new.ejs");
+  if(!req.isAuthenticated()){
+    req.flash("failure","You must be logged in");
+    return res.redirect("/login")
+  }
+  res.render("listings/new.ejs");
 })
   
   
