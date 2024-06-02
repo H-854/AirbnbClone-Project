@@ -29,7 +29,7 @@ router.route("/add/new")
 router.route("/:id")
 .get(wrapAsync(listingController.show))
 .delete(isLoggedIn,authorization,wrapAsync(listingController.destroy))
-.put(isLoggedIn,authorization,validateListing,wrapAsync(listingController.update))
+.put(isLoggedIn,authorization,upload.single("listing[image]"),validateListing,wrapAsync(listingController.update))
 
 
 router.route("/:id/edit")
