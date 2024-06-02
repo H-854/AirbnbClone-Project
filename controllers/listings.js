@@ -35,23 +35,13 @@ module.exports.edit = async (req, res) => {
       req.flash("failure","Listing doesn't exit");
       res.redirect("/listings");
     }
-    let ogImage = listing.image.url;
-    ogImage = ogImage.replace("/upload","/upload/h_300,w_150")
     req.flash("success","Listing edited")
-    res.render("listings/edit.ejs", { listing ,ogImage});
+    res.render("listings/edit.ejs", { listing });
 }
 
 module.exports.update = async (req, res) => {
     let { id } = req.params;
-    let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-    if(typeof req.file !== "undefined"){
-      let url = req.file.path;
-      let filename = req.file.filename;
-      listing.image = {url,filename}
-    }
-    
-    await listing.save();
-
+    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
     req.flash("success","Listing updated")
     res.redirect(`/listings/${id}`);
 }
