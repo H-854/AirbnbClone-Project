@@ -31,6 +31,8 @@
             align-items: center;
         }
     </style>
+    <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div id="filters">
         <div class="filter">
             <div><i class="fa-solid fa-fire"></i></div>
@@ -83,6 +85,8 @@
             </div>
         </div>
     </div>
+</div>
+</nav>
     <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
         <%for(let listing of listings){%>
             <a href="/listings/<%=listing._id%>" class="listing-achor">
