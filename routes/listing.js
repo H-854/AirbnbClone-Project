@@ -23,16 +23,16 @@ router.route("/")
 .post(isLoggedIn,validateListing,upload.single("listing[image]"),wrapAsync(listingController.new))
 
 
-router.route("/listings/add/new")
+router.route("/add/new")
 .get(isLoggedIn,listingController.renderNew);
 
-router.route("/listings/:id")
+router.route("/:id")
 .get(wrapAsync(listingController.show))
 .delete(isLoggedIn,authorization,wrapAsync(listingController.destroy))
 .put(isLoggedIn,authorization,upload.single("listing[image]"),validateListing,wrapAsync(listingController.update))
 
 
-router.route("/listings/:id/edit")
+router.route("/:id/edit")
 .get(isLoggedIn,authorization,wrapAsync(listingController.edit));
 
 module.exports = router
