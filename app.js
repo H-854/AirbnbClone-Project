@@ -13,6 +13,7 @@ const userRouter = require("./routes/user.js");
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const passport = require("passport");
 const localStrategy = require("passport-local");
@@ -27,7 +28,7 @@ main()
 .catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/airbnbClone');
+  await mongoose.connect(process.env.ATLAS_DB_URL);
 }
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"/views"));
@@ -41,10 +42,17 @@ app.use(express.static(path.join(__dirname,"/public")));
 app.engine('ejs', ejsMate);
 const port = 3000;
 
+const store = MongoStore.create({ mongoUrl: process.env.ATLAS_DB_URL,
+  crypto: {
+    secret: process.env.SECRET
+  },
+  touchAfter: 24*60*60
+ })
 
 app.use(session(
   {
-    secret: "mySecretCode",
+    store: store,
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
     cookie:{
