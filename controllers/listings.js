@@ -35,11 +35,9 @@ module.exports.edit = async (req, res) => {
       req.flash("failure","Listing doesn't exit");
       res.redirect("/listings");
     }
-    let ogImage = listing.image.url;
-    ogImage = ogImage.replace("/upload","/upload/h_300,w_150")
 
     req.flash("success","Listing edited")
-    res.render("listings/edit.ejs", { listing ,ogImage});
+    res.render("listings/edit.ejs", { listing });
 }
 
 module.exports.update = async (req, res) => {
@@ -62,8 +60,11 @@ module.exports.renderNew = (req,res)=>{
 }
 
 module.exports.new = async (req, res) => {
+    let url = req.file.path;
+    let filename = req.file.filename;
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
+    newListing.image = {url,filename};
     await newListing.save();
     req.flash("success","New Listing Created");
     res.redirect("/listings");

@@ -1,3 +1,7 @@
+if(process.env.NODE_ENV!="production"){
+  require("dotenv").config();
+}
+
 const express = require("express");
 const app = express();
 const mongoose = require('mongoose');
@@ -14,6 +18,8 @@ const flash = require('connect-flash');
 const passport = require("passport");
 const localStrategy = require("passport-local");
 const User = require("./models/user.js");
+const cookieParser = require("cookie-parser")
+
 
 app.use(methodOverride('_method'));
 
@@ -29,14 +35,13 @@ async function main() {
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"/views"));
 app.use(express.json()); // for json
-app.use(express.urlencoded({ extended: true })); // for form data
-//serving static files
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname,"/public")));
 
 
 // use ejs-locals for all ejs templates:
 app.engine('ejs', ejsMate);
-const port = 3000;
+const port = 8080;
 
 const store = MongoStore.create({ mongoUrl: process.env.ATLAS_DB_URL,
   crypto: {
@@ -59,15 +64,12 @@ app.use(session(
   }
 ))
 app.use(flash());
+app.use(cookieParser())
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new localStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
-app.listen(port,()=>{
-    console.log("Server is listening to port : ",3000);
-})
 
 app.use((req,res,next)=>{
   res.locals.success = req.flash("success");
@@ -75,16 +77,6 @@ app.use((req,res,next)=>{
   res.locals.userReq = req.user;
   next();
 })
-
-// app.get("/demo",async (req,res)=>{
-//   let fakeUser = new User({
-//     email: "student@gmail.com",
-//     username: "stu123"
-//   })
-//   let registeredUser = await User.register(fakeUser,"password");  
-//   res.send(registeredUser);
-// })
-
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews",reviewRouter);
@@ -100,4 +92,7 @@ app.use((err,req,res,next)=>{
   let { status=500,message ="UNKNOWN ERROR OCCURED"} = err;
   res.status(status).render("error.ejs",{ err });
   // res.status(status).send(message);
+})
+app.listen(port,()=>{
+  console.log("Server is listening to port : ",8080);
 })

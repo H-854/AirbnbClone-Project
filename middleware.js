@@ -1,6 +1,8 @@
 const Listing = require("./models/listing.js");
 const Review = require("./models/review.js");
+
 module.exports.isLoggedIn = (req,res,next)=>{
+    console.log(req.user)
     if(!req.isAuthenticated()){
         req.session.redirectUrl = req.originalUrl;
         req.flash("failure","You must be logged in");
@@ -8,6 +10,7 @@ module.exports.isLoggedIn = (req,res,next)=>{
     }
     next()
 }
+
 module.exports.saveRedirectUrl = (req,res,next)=>{
     if(req.session.redirectUrl){
         res.locals.redirectUrl = req.session.redirectUrl;
