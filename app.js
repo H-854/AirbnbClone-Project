@@ -30,7 +30,7 @@ main()
 .catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect(process.env.ATLAS_DB_URL);
+  await mongoose.connect('mongodb://127.0.0.1:27017/airbnbClone');
 }
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"/views"));
@@ -41,9 +41,9 @@ app.use(express.static(path.join(__dirname,"/public")));
 
 // use ejs-locals for all ejs templates:
 app.engine('ejs', ejsMate);
-const port = 8080;
+const port = 3000;
 
-const store = MongoStore.create({ mongoUrl: process.env.ATLAS_DB_URL,
+const store = MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/airbnbClone',
   crypto: {
     secret: process.env.SECRET
   },
@@ -94,5 +94,5 @@ app.use((err,req,res,next)=>{
   // res.status(status).send(message);
 })
 app.listen(port,()=>{
-  console.log("Server is listening to port : ",8080);
+  console.log("Server is listening to port : ",3000);
 })

@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "v20.12.2"
+  },
   "name": "airbnb-clone-full-stack-project",
   "version": "1.0.0",
   "description": "",
